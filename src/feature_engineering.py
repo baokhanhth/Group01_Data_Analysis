@@ -45,3 +45,22 @@ def add_top_amenity_features(df, top_amenities, col='amenities'):
         ).astype(int)
     
     return df
+
+def simplify_property_type(prop):
+    prop = str(prop).lower()
+    
+    # Nhóm Căn hộ
+    if any(keyword in prop for keyword in ['rental unit', 'condo', 'loft', 'serviced apartment', 'apartment']):
+        return 'Apartment'
+    
+    # Nhóm Nhà riêng
+    elif any(keyword in prop for keyword in ['home', 'townhouse', 'villa', 'guesthouse', 'cottage', 'tiny home']):
+        return 'House'
+    
+    # Nhóm Dịch vụ/Khách sạn
+    elif any(keyword in prop for keyword in ['hotel', 'bed and breakfast', 'casa particular']):
+        return 'Hotel_B_and_B'
+    
+    # Còn lại (Guest suite, Boat, và các loại linh tinh)
+    else:
+        return 'Other_Unique'

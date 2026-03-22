@@ -6,17 +6,23 @@ def clean_price(df, col='price'):
     return df
 
 def fill_bathrooms_text(df):
+    df['bathrooms_text'] = df['bathrooms_text'].str.lower()
+    # tính mode theo room_type
     mode_bath = df.groupby('room_type')['bathrooms_text'].transform(
-        lambda x: x.mode()[0] if not x.mode().empty else "1 bath"
+        lambda x: x.mode()[0] if not x.mode().empty else None
     )
+    # fill theo group
     df['bathrooms_text'] = df['bathrooms_text'].fillna(mode_bath)
+    df['bathrooms_text'] = df['bathrooms_text'].fillna("1 bath")
+
     return df
 
-def fill_bathrooms_text(df):
-    mode_bath = df.groupby('room_type')['bathrooms_text'].transform(
-        lambda x: x.mode()[0] if not x.mode().empty else "1 bath"
+def fill_beds(df): 
+    df['beds'] = df['beds'].fillna(
+        df.groupby('bedrooms')['beds'].transform('median')
     )
-    df['bathrooms_text'] = df['bathrooms_text'].fillna(mode_bath)
+    df['beds'] = df['beds'].fillna(1)
+    
     return df
 
 def fill_review_scores(df):
@@ -29,7 +35,6 @@ def clean_amenities(df, col='amenities'):
     cleaned = df[col] \
         .str.replace(r'["\[\]]', '', regex=True) \
         .str.split(',')
-
     cleaned = cleaned.apply(
         lambda x: [i.strip() for i in x] if isinstance(x, list) else []
     )
