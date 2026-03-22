@@ -64,3 +64,11 @@ def simplify_property_type(prop):
     # Còn lại (Guest suite, Boat, và các loại linh tinh)
     else:
         return 'Other_Unique'
+    
+def encode_property_type(df, column_name='property_type_clean'):
+
+    df_encoded = pd.get_dummies(df, columns=[column_name], drop_first=True, dtype=int)
+    
+    new_cols = [col for col in df_encoded.columns if column_name in col]
+    print(f"Đã tạo ra {len(new_cols)} cột mới: {new_cols}")
+    return df_encoded
